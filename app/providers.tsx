@@ -11,6 +11,21 @@ const theme = {
                 bg: '#E5E5E5'
             }
         }
+    },
+    colors: {
+        primary: {
+            100: '#3699FF',
+            150: '#1b7be0',
+        },
+        secondary: {
+            100: '#F3F6F9',
+            200: '#B5B5C3',
+            500: '#464E5F'
+        },
+        danger: {
+            100: 'red',
+            200: '#e51f1f'
+        }
     }
 }
 
