@@ -19,6 +19,7 @@ const theme = {
         },
         secondary: {
             100: '#F3F6F9',
+            150: '#e5e5e5',
             200: '#B5B5C3',
             500: '#464E5F'
         },
