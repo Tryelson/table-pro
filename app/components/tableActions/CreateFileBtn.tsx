@@ -6,7 +6,12 @@ import { storage } from "@/firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { FormEvent, useState } from "react";
 
-export default function CreateFileBtn(){
+interface CreateFileBtnProps {
+    handleGetTableFiles: () => Promise<void>,
+    filesDataCount: number
+}
+
+export default function CreateFileBtn({ handleGetTableFiles, filesDataCount }: CreateFileBtnProps){
 
     const toast = useToast()
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -19,20 +24,33 @@ export default function CreateFileBtn(){
     async function handleCreateFile(payload: CreateFilePayload){
         setIsLoading(true)
 
-        if(payload.file && payload.file[0].size <= 10000000){
+        if(payload.file && payload.file[0].size <= 1000000){
             const storageRef = ref(storage, payload.file[0].name)
-            const uploadTask = uploadBytesResumable(storageRef, payload.file[0])
+
+            const metadata = {
+                customMetadata: {
+                    author: payload.authorName // Define o nome do autor
+                }
+            };
+
+            const uploadTask = uploadBytesResumable(storageRef, payload.file[0], metadata)
 
             uploadTask.on('state_changed',
                 (snapshot) => {
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log('Progresso do Upload: ' + progress + '%');
                 },
                 (error) => {
-                    console.error('Erro durante o upload:', error);
                     setIsLoading(false)
+                    toast({
+                        title: 'Erro no servidor!',
+                        status: 'error',
+                        position: 'top',
+                        duration: 3000
+                    })
+                    handleOnCloseModal()
                 },
-                () => {
+                async () => {
+                    await handleGetTableFiles()
                     toast({
                         title: 'Upload feito com sucesso!',
                         status: 'success',
@@ -40,21 +58,35 @@ export default function CreateFileBtn(){
                         duration: 3000
                     })
                     setIsLoading(false)
+                    handleOnCloseModal()
                 }
             );
+        } else {
+            toast({
+                title: 'Arquivo muito grande! Escolha outro arquivo.',
+                status: 'error',
+                position: 'top',
+                duration: 3000
+            })
+            setIsLoading(false)
         }
+    }
+
+    function handleOnCloseModal(){
+        setIsLoading(false)
+        onClose()
     }
 
     async function onSubmit(event: FormEvent){
         event.preventDefault()
         handleCreateFile(formFields)
     }
-    
+
     return (
         <>
-            <Button type="button" onClick={onOpen} borderRadius={'10px'} py='10px' px='20px' variant={'primary'}>Upload File</Button>
+            <Button type="button" onClick={onOpen} borderRadius={'10px'} py='10px' px='20px' variant={'primary'} isDisabled={filesDataCount >= 5}>Upload File</Button>
         
-            <Modal isOpen={isOpen} onClose={onClose} isCentered variant={'wide'}>
+            <Modal isOpen={isOpen} onClose={handleOnCloseModal} isCentered variant={'wide'}>
                 <ModalOverlay />
                 
                 <ModalContent bgColor={'white'} color={'black'}>
@@ -77,7 +109,7 @@ export default function CreateFileBtn(){
                                 </InputGroup>
 
                                 <Flex align={'center'} justify={'flex-end'} gap='10px' my='20px'>
-                                    <Button type='button' variant='danger' mr={3} onClick={onClose}>Close</Button>
+                                    <Button type='button' variant='danger' mr={3} onClick={handleOnCloseModal}>Close</Button>
                                     <Button type='submit' variant={'primary'} isLoading={isLoading} loadingText={'Uploading...'}>Create File</Button>
                                 </Flex>
                             </FormControl>

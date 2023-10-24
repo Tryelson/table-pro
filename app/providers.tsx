@@ -16,14 +16,23 @@ export const theme = extendTheme({
                     bg: '#3699FF',
                     color: 'white',
                     _hover: {
-                        bg: '#1b7be0',
+                        _disabled: {
+                            opacity: '0.5',
+                            bg: '#3699FF',
+                        },
+                        bg: '#3699FF',
                         boxShadow: '0px 0px 5px #3699FF'
-                    }
+                    },
                 },
                 danger: {
                     bg: 'red',
                     color: 'white',
                     _hover: {
+                        _disabled: {
+                            opacity: '0.5',
+                            bg: '#e51f1f',
+                        },
+
                         bg: '#e51f1f',
                         boxShadow: '0px 0px 5px #e51f1f'
                     }
@@ -32,6 +41,11 @@ export const theme = extendTheme({
                     bg: 'transparent',
                     color: '#B5B5C3',
                     _hover: {
+                        _disabled: {
+                            opacity: '0.5',
+                            bg: 'black',
+                        },
+
                         bg: 'black',
                         color: 'white',
                         boxShadow: '0px 0px 5px black'
@@ -66,6 +80,17 @@ export const theme = extendTheme({
     },
     styles: {
         global: {
+            '::-webkit-scrollbar': {
+                width: '12px',
+            },
+            '::-webkit-scrollbar-track': {
+                background: '#e5e5e5',
+                borderRadius: '6px',
+            },
+            '::-webkit-scrollbar-thumb': {
+                background: '#4b4b4b',
+                borderRadius: '6px',
+            },
             body: {
                 bg: '#E5E5E5'
             }
