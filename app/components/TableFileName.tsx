@@ -4,6 +4,7 @@ import { AiOutlinePicture } from 'react-icons/ai';
 import { BsFileText } from 'react-icons/bs';
 import { ImFileZip } from 'react-icons/im';
 import { VscFilePdf } from 'react-icons/vsc';
+import resumeText from "../utils/resumeText";
 
 interface TableFileNameProps {
     fileName: string
@@ -28,7 +29,7 @@ export function TableFileName({ fileName }: TableFileNameProps){
     return (
         <Flex align={'center'} gap='5px'>
             {imagesCondition()}
-            {fileName}
+            {resumeText({fullPath: fileName})}
         </Flex>
     )
 }
